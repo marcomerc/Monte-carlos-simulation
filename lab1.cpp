@@ -6,15 +6,10 @@
 #include <iomanip>      // std::setw
 #include <fstream>
 using namespace std;
-
-
-
 bool in_circle(double& x,double& y){
    if ( sqrt( pow(x,2) + pow(y,2) ) < 1) return true; // checking if its inside the circle by checking if the radious of the points less than 1
    else return false;
 }
-
-
 double estimate_pi(const int& n){ // estimating pi by getting random numbers between 1 and 0
   srand(time(NULL));
    double x = 0;
@@ -141,7 +136,6 @@ for(int i = 1; i <= limit;i=i*10){ // getting the estimations the Difference off
      file << "\n";
      file << "\n";
   }
-
-
+  file.close();
   return 0;
 }
