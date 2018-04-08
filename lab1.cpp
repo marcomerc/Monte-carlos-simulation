@@ -5,6 +5,7 @@
 #include <time.h>
 #include <iomanip>      // std::setw
 #include <fstream>
+#include <unistd.h>
 using namespace std;
 bool in_circle(double& x,double& y){
    if ( sqrt( pow(x,2) + pow(y,2) ) < 1) return true; // checking if its inside the circle by checking if the radious of the points less than 1
@@ -37,7 +38,7 @@ double estimate_tri_pi(const int& n){ // estimating pi by getting ramdom number 
      x = rand();
      y = rand();
      x = x / RAND_MAX;
-     y = x / RAND_MAX;
+     y = y / RAND_MAX;
      while( (y+x) < 1){ // if it's not in the triangle then keep getting random numbers untill you get one inside the triangle
        x = rand();
        y = rand();
@@ -51,20 +52,56 @@ double estimate_tri_pi(const int& n){ // estimating pi by getting ramdom number 
 }
 
 vector<double>* pi_sequence(const int&n){ // get n estimations of pi. if n is 10 it gets estimations of pi from 1 random point to 10 random points
+  double pointsx[n];
+  double pointsy[n];
   vector<double> * v= new vector<double>(n);
-  double pi =0;
-  for(int i = 0; i < n; i++){
-    pi=estimate_pi(i+1);
-    v->at(i) = pi;
+  srand(time(NULL));
+  for(int i = 0; i  < n; i++){ // get n random numbers
+    double x = 0;
+    double y = 0;
+    x = rand();
+    y = rand();
+    pointsx[i] = x / RAND_MAX;
+    pointsy[i] = y / RAND_MAX;
   }
-  return v;
+  for(int i = 0; i  < n; i++){
+    double in = 0;
+    double out = 0;
+    for(int j = 0; j <= i; j++){
+      if (in_circle(pointsx[j],pointsy[j])){ in+=1; }
+      else{out+=1;}
+    }
+    v->at(i) = (in / (in+out)) * 4;
+  }
+   return v;
 }
 vector<double>* new_pi_sequence(const int& n){ // get n estimations of pi. if n is 10 it gets estimations of pi from 1 random point to 10 random points using the trinagle
   vector<double> * v= new vector<double>(n);
-  double pi =0;
-  for(int i = 0; i < n; i++){
-    pi=estimate_tri_pi(i+1);
-    v->at(i) = pi;
+  double pointsx[n];
+  double pointsy[n];
+  srand(time(NULL));
+  for(int i = 0; i  < n; i++){ // get n random numbers
+    double x = 0;
+    double y = 0;
+    x = rand();
+    y = rand();
+    pointsx[i] = x / RAND_MAX;
+    pointsy[i] = y / RAND_MAX;
+    while( (pointsx[i] + pointsy[i] ) < 1){ // if it's not in the triangle then keep getting random numbers untill you get one inside the triangle
+      x = rand();
+      y = rand();
+      pointsx[i] = x / RAND_MAX;
+      pointsy[i] = y / RAND_MAX;
+    }
+  }
+  for(int i = 0; i  < n; i++){
+    double in = 0;
+    double out = 0;
+    for(int j = 0; j <= i; j++){
+      if (in_circle(pointsx[j],pointsy[j])) { in+=1; }
+      else{out+=1;}
+    }
+    v->at(i) = ((in / (out+in)) * 2) + 2; // using the formula total inside the cirucl /(total inside trinagle) * 2 + 2 to get pi
   }
   return v;
 }
@@ -99,29 +136,42 @@ for(int i = 1; i <= limit;i=i*10){ // getting the estimations the Difference off
       setw(20) <<'\n';
 }
   // getting 6 pi sequence to plot  6 sequences with the triangle method
+
+  //exercise 2
   vector<vector<double> *>v;
   vector<double> *v1 = new_pi_sequence(2000);
   v.push_back(v1);
+  sleep(1);
   vector<double> *v2 = new_pi_sequence(2000);
   v.push_back(v2);
+  sleep(1);
   vector<double> *v3 = new_pi_sequence(2000);
   v.push_back(v3);
+  sleep(1);
   vector<double> *v4 = new_pi_sequence(2000);
   v.push_back(v4);
+  sleep(1);
   vector<double> *v5 = new_pi_sequence(2000);
   v.push_back(v5);
+  sleep(1);
   vector<double> *v6 = new_pi_sequence(2000);
   v.push_back(v6);
+  sleep(1);
   vector<double> *v7 =  pi_sequence(2000);
   v.push_back(v7);
+  sleep(1);
   vector<double> *v8 =  pi_sequence(2000);
   v.push_back(v8);
+  sleep(1);
   vector<double> *v9 =  pi_sequence(2000);
   v.push_back(v9);
+  sleep(1);
   vector<double> *v10 = pi_sequence(2000);
   v.push_back(v10);
+  sleep(1);
   vector<double> *v11 = pi_sequence(2000);
   v.push_back(v11);
+  sleep(1);
   vector<double> *v12 = pi_sequence(2000);
   v.push_back(v12);
   // putting the sequences into a file to plot them
@@ -133,7 +183,6 @@ for(int i = 1; i <= limit;i=i*10){ // getting the estimations the Difference off
        file << temp->at(j);
        file << ",";
      }
-     file << "\n";
      file << "\n";
   }
   file.close();
